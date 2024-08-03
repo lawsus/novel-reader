@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novel Reader</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        .last-url {
+            background-color: #e8f5e9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .nav-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .nav-button:hover {
+            background-color: #45a049;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            width: 70%;
+            margin-right: 10px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Novel Reader</h1>
+        
+        {% if show_last_url and last_url %}
+        <div class="last-url">
+            <strong>Last accessed URL:</strong> {{ last_url }}
+            <div class="button-container">
+                <form method="POST">
+                    <input type="hidden" name="url" value="{{ last_url }}">
+                    <button type="submit" class="nav-button">Extract Last URL</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not content %}
+            <form method="POST" id="urlForm">
+                <input type="text" name="url" placeholder="Enter URL" required>
+                <button type="submit" class="nav-button">Extract</button>
+            </form>
+        {% else %}
+            <div class="navigation">
+                <form method="POST">
+                    <input type="hidden" name="home" value="true">
+                    <button type="submit" class="nav-button">Home</button>
+                </form>
+            </div>
+
+            <div class="content">{{ content | safe }}</div>
+            
+            <div class="navigation">
+                {% if prev_chapter_url %}
+                    <form method="POST" id="prevForm">
+                        <input type="hidden" name="url" value="{{ prev_chapter_url }}">
+                        <button type="submit" class="nav-button">Previous</button>
+                    </form>
+                {% else %}
+                    <div></div>
+                {% endif %}
+                
+                {% if next_chapter_url %}
+                    <form method="POST" id="nextForm">
+                        <input type="hidden" name="url" value="{{ next_chapter_url }}">
+                        <button type="submit" class="nav-button">Next</button>
+                    </form>
+                {% else %}
+                    <div></div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                const prevForm = document.getElementById('prevForm');
+                if (prevForm) {
+                    prevForm.submit();
+                }
+            } else if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                const nextForm = document.getElementById('nextForm');
+                if (nextForm) {
+                    nextForm.submit();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+zconf.py
+__pycache__
+.venv/
+chapters.db
+.gitattributes
+.DS_Store
